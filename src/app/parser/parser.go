@@ -1,5 +1,3 @@
-// parser.go
-
 package parser
 
 import (
@@ -12,26 +10,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-//func decodeCategoryResponse(body io.Reader) (models.ProductList, error) {
-//	var items struct {
-//		Items []struct {
-//			models.Product
-//		}
-//	}
-//
-//	err := json.NewDecoder(body).Decode(&items)
-//	if err != nil {
-//		return nil, errors.Wrap(err, "cannot decode response")
-//	}
-//
-//	p := models.ProductList{}
-//
-//	return p, nil
-//}
+const itemsURL = "https://www.sima-land.ru/api/v5/item?p=100"
 
-const itemsURL = "https://www.sima-land.ru/api/v5/item?p=50"
-
-// Функция для получения товаров
 func getItemData(token string) ([]models.Product, error) {
 	client := resty.New()
 	resp, err := client.R().
@@ -52,28 +32,17 @@ func getItemData(token string) ([]models.Product, error) {
 	return items, nil
 }
 
-func ParseCategory(categoryID int) (models.ProductList, error) {
+func ParseAllProducts() (models.ProductList, error) {
 	token, err := apiToken.GetJWTToken()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get JWT token")
 	}
 
-	// Получаем данные о товарах
 	p, err := getItemData(token)
 	fmt.Println(p)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get item data")
 	}
-
-	// способ извлечь информацию из items
-	// Например, если items - это []models.Product:
-	//body := bytes.NewReader([]byte{}) // Это временное значение
-	//
-	//// используем items для обработки
-	//p, t, err := decodeCategoryResponse(body)
-	//if err != nil {
-	//	return nil, nil, err
-	//}
 
 	return p, nil
 }
