@@ -14,7 +14,7 @@ type AuthResponse struct {
 }
 
 func GetJWTToken() (string, error) {
-	err := godotenv.Load("/home/nikita/Projects/gitlab.sima-land.ru/nikita/showcase/dev.env")
+	err := godotenv.Load("/home/nikita/Projects/gitlab.sima-land.ru/corrector/src/dev.env")
 	if err != nil {
 		return "", fmt.Errorf("Error loading .env file: %w", err)
 	}

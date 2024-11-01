@@ -2,38 +2,23 @@ package app
 
 import (
 	"corrector/app/parser"
-	"corrector/repository"
+	"corrector/check"
 	"log"
 )
 
-const (
-	toysCategoryID    = 687
-	apparelCategoryID = 3515
-	sportCategoryID   = 16
-)
-
 func (s *Server) Import() {
-	categoryNames := map[int]string{
-		toysCategoryID:    "Игрушки",
-		apparelCategoryID: "Одежда",
-		sportCategoryID:   "Спорт",
+	log.Println("Starting the import of all products...")
+
+	products, err := parser.ParseAllProducts()
+	if err != nil {
+		log.Printf("Cannot read API response: %v\n", err)
+		return
 	}
 
-	for id, name := range categoryNames {
-
-		products, err := parser.ParseCategory(id)
-		if err != nil {
-			log.Printf("can not read api response: %v\n", err)
-
-			continue
-		}
-
-		if err = repository.UpsertProducts(s.DB, products); err != nil {
-			log.Printf("can not insert products: %v\n", err)
-
-			continue
-		}
-
-		log.Printf("Category \"%v\" saved", name)
+	if err = check.UpsertProducts(s.DB, products); err != nil {
+		log.Printf("Cannot insert products: %v\n", err)
+		return
 	}
+
+	log.Printf("All products imported successfully.")
 }
